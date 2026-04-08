@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Highlight, themes } from "prism-react-renderer";
 import { type Item, type Folder, ItemType } from "@/app/generated/prisma/browser";
+import { useTheme } from "@/components/ThemeProvider";
 
 type ItemWithFolder = Item & { folder: Pick<Folder, "id" | "name"> };
 
@@ -92,9 +94,25 @@ const LANGUAGE_COLORS: Record<string, string> = {
 
 const DEFAULT_LANG_COLOR = "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
 
+const PRISM_LANGUAGE_MAP: Record<string, string> = {
+  typescript: "typescript",
+  javascript: "javascript",
+  python: "python",
+  go: "go",
+  rust: "rust",
+  java: "java",
+  "c#": "csharp",
+  html: "markup",
+  css: "css",
+  sql: "sql",
+  bash: "bash",
+};
+
 function SnippetCard({ item, expanded, onToggleExpand }: { item: ItemWithFolder; expanded: boolean; onToggleExpand: () => void }) {
+  const { theme } = useTheme();
   const langKey = item.language?.toLowerCase() ?? "";
   const langColor = LANGUAGE_COLORS[langKey] ?? DEFAULT_LANG_COLOR;
+  const prismLang = PRISM_LANGUAGE_MAP[langKey] ?? "plain";
   const lineCount = item.content.split("\n").length;
   const isLong = lineCount > 4;
 
@@ -110,10 +128,27 @@ function SnippetCard({ item, expanded, onToggleExpand }: { item: ItemWithFolder;
       <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
         {item.title}
       </h3>
-      <div className="mt-2 overflow-hidden rounded bg-gray-50 dark:bg-gray-900">
-        <pre className={`whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-gray-700 dark:text-gray-300 p-2 ${expanded ? "" : "line-clamp-4"}`}>
-          {item.content}
-        </pre>
+      <div className="mt-2 overflow-hidden rounded">
+        <Highlight
+          theme={theme === "dark" ? themes.oneDark : themes.oneLight}
+          code={item.content}
+          language={prismLang}
+        >
+          {({ style, tokens, getLineProps, getTokenProps }) => (
+            <pre
+              style={style}
+              className={`p-2 text-[11px] leading-relaxed overflow-x-auto ${expanded ? "" : "line-clamp-4"}`}
+            >
+              {tokens.map((line, i) => (
+                <div key={i} {...getLineProps({ line })}>
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token })} />
+                  ))}
+                </div>
+              ))}
+            </pre>
+          )}
+        </Highlight>
         {isLong && (
           <button
             onClick={(e) => {
