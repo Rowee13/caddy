@@ -39,54 +39,50 @@ export default function Dashboard({ folders, items }: DashboardProps) {
   });
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      {/* Header */}
-      <header className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3">
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="md:hidden p-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          aria-label="Open sidebar"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar — full height */}
+      <Sidebar
+        folders={folders}
+        selectedFolderId={selectedFolderId}
+        onSelectFolder={setSelectedFolderId}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
+      {/* Right side: header + main content */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Header */}
+        <header className="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3">
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden p-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Open sidebar"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </button>
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
 
-        {/* Logo - hidden on mobile to save space */}
-        <span className="hidden md:block text-lg font-bold tracking-tight text-gray-900 dark:text-white shrink-0">
-          Caddy
-        </span>
+          {/* Search */}
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
 
-        {/* Search */}
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
-
-        {/* Theme toggle */}
-        <ThemeToggle />
-      </header>
-
-      {/* Body: sidebar + main */}
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          folders={folders}
-          selectedFolderId={selectedFolderId}
-          onSelectFolder={setSelectedFolderId}
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+          {/* Theme toggle */}
+          <ThemeToggle />
+        </header>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
           <ItemGrid
             items={filteredItems}
             onItemClick={(item) => setModalState({ isOpen: true, item })}
