@@ -692,15 +692,15 @@
      … +29 lines (ctrl+o to expand)
   ⎿  (timeout 30s)
 
-● I can see the issue — the password contains an @ symbol (paRRowhoRRizon@2026)
+● I can see the issue — the password contains an @ symbol ([REDACTED_PASSWORD]@2026)
   which is being parsed as part of the URL delimiter. The @ in the password
   needs to be URL-encoded as %40.
 
 ● User answered Claude's questions:
   ⎿  · Your Supabase password contains an `@` symbol which breaks the connection
       URL parsing. Can you update the password in `.env` by replacing `@` with 
-     `%40`? For example: `paRRowhoRRizon%402026` instead of 
-     `paRRowhoRRizon@2026` — in both DATABASE_URL and DIRECT_URL. → Done, I've 
+     `%40`? For example: `[REDACTED_PASSWORD]%402026` instead of 
+     `[REDACTED_PASSWORD]@2026` — in both DATABASE_URL and DIRECT_URL. → Done, I've 
      updated it
 
 ● Bash(cd "F:/dev/_dev-practice/_coding-challenge/caddy" && npx prisma db push
@@ -774,7 +774,7 @@
       require('dotenv').config();…)
   ⎿  Host: aws-1-ap-northeast-2.pooler.supabase.com
      Port: 5432
-     User: postgres.chmwhfeyfzmjjgqynzdj
+     User: postgres.[REDACTED_PROJECT_REF]
      DB: /postgres
 
 ● Both URLs use the pooler hostname. For Supabase, db push needs a direct
@@ -792,7 +792,7 @@
 ● Bash(cd "F:/dev/_dev-practice/_coding-challenge/caddy" && node -e "
       require('dotenv').config();…)
   ⎿  Error: Exit code 127
-     Using: postgresql://postgres.chmwhfeyfzmjjgqynzdj:****@aws-1-ap-northeast-2
+     Using: postgresql://postgres.[REDACTED_PROJECT_REF]:****@aws-1-ap-northeast-2
      .pooler.supabase.com:5432/postgres
      /usr/bin/bash: line 11: cross-env: command not found
      [rerun: b25]
