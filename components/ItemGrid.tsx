@@ -9,9 +9,24 @@ interface ItemGridProps {
   items: ItemWithFolder[];
   onItemClick: (item: ItemWithFolder) => void;
   onNewItem: () => void;
+  hasSearchQuery?: boolean;
 }
 
-function EmptyState({ onNewItem }: { onNewItem: () => void }) {
+function EmptyState({ onNewItem, hasSearchQuery }: { onNewItem: () => void; hasSearchQuery?: boolean }) {
+  if (hasSearchQuery) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="text-5xl">🔍</div>
+        <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          No items match your search
+        </h3>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          Try a different query or clear the search.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="text-5xl">📦</div>
@@ -35,9 +50,10 @@ export default function ItemGrid({
   items,
   onItemClick,
   onNewItem,
+  hasSearchQuery,
 }: ItemGridProps) {
   if (items.length === 0) {
-    return <EmptyState onNewItem={onNewItem} />;
+    return <EmptyState onNewItem={onNewItem} hasSearchQuery={hasSearchQuery} />;
   }
 
   return (

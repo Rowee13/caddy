@@ -15,8 +15,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Caddy",
-  description: "Your personal bookmark manager",
+  title: "Caddy — Personal Knowledge Base",
+  description:
+    "Save links, code snippets, and notes in one place. Organize with folders, search instantly.",
+  icons: { icon: "/favicon.ico" },
+  openGraph: {
+    title: "Caddy — Personal Knowledge Base",
+    description:
+      "Save links, code snippets, and notes in one place.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

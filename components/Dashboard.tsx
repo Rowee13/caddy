@@ -45,7 +45,7 @@ export default function Dashboard({ folders, items }: DashboardProps) {
         {/* Mobile hamburger */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="md:hidden p-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="Open sidebar"
         >
           <svg
@@ -91,6 +91,7 @@ export default function Dashboard({ folders, items }: DashboardProps) {
             items={filteredItems}
             onItemClick={(item) => setModalState({ isOpen: true, item })}
             onNewItem={() => setModalState({ isOpen: true, item: null })}
+            hasSearchQuery={searchQuery.length > 0}
           />
         </main>
       </div>

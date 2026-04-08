@@ -46,6 +46,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder="Search items..."
+        aria-label="Search items"
         className="w-full pl-10 pr-9 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
       />
 

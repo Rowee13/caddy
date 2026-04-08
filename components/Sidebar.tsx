@@ -46,7 +46,7 @@ export default function Sidebar({
           {/* Mobile close button */}
           <button
             onClick={onClose}
-            className="md:hidden p-1 rounded-lg text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
             aria-label="Close sidebar"
           >
             <svg

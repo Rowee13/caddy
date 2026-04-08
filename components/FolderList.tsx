@@ -6,6 +6,7 @@ import {
   updateFolder,
   deleteFolder,
 } from "@/app/actions/folders";
+import toast from "react-hot-toast";
 
 export type FolderWithCount = {
   id: string;
@@ -61,8 +62,13 @@ export default function FolderList({
     const trimmed = newFolderName.trim();
     if (!trimmed) return;
     startTransition(async () => {
-      await createFolder(trimmed);
-      setNewFolderName("");
+      try {
+        await createFolder(trimmed);
+        setNewFolderName("");
+        toast.success("Folder created.");
+      } catch {
+        toast.error("Failed to create folder.");
+      }
     });
   }
 
@@ -73,17 +79,27 @@ export default function FolderList({
       return;
     }
     startTransition(async () => {
-      await updateFolder(id, trimmed);
-      setEditingId(null);
+      try {
+        await updateFolder(id, trimmed);
+        setEditingId(null);
+        toast.success("Folder renamed.");
+      } catch {
+        toast.error("Failed to rename folder.");
+      }
     });
   }
 
   function handleDelete(id: string) {
     if (!window.confirm("Delete this folder and all its items?")) return;
     startTransition(async () => {
-      await deleteFolder(id);
-      if (selectedFolderId === id) {
-        onSelectFolder(null);
+      try {
+        await deleteFolder(id);
+        if (selectedFolderId === id) {
+          onSelectFolder(null);
+        }
+        toast.success("Folder deleted.");
+      } catch {
+        toast.error("Failed to delete folder.");
       }
     });
   }
@@ -128,6 +144,7 @@ export default function FolderList({
               <input
                 ref={editInputRef}
                 type="text"
+                aria-label="Rename folder"
                 value={editingName}
                 onChange={(e) => setEditingName(e.target.value)}
                 onBlur={() => handleUpdate(folder.id)}
@@ -152,6 +169,7 @@ export default function FolderList({
                 <span
                   role="button"
                   tabIndex={0}
+                  aria-label="Folder options"
                   onClick={(e) => {
                     e.stopPropagation();
                     setMenuOpenId(menuOpenId === folder.id ? null : folder.id);
@@ -204,6 +222,7 @@ export default function FolderList({
         <input
           type="text"
           placeholder="New folder..."
+          aria-label="New folder name"
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
           onKeyDown={(e) => {
