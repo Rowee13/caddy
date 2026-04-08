@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getFolders } from "@/app/actions/folders";
 import { getItems } from "@/app/actions/items";
 import Dashboard from "@/components/Dashboard";
