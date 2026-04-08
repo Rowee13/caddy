@@ -1,6 +1,6 @@
 "use client";
 
-import { type Item, type Folder, ItemType } from "@/app/generated/prisma/client";
+import { type Item, type Folder, ItemType } from "@/app/generated/prisma/browser";
 
 type ItemWithFolder = Item & { folder: Pick<Folder, "id" | "name"> };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useTransition, useCallback } from "react";
-import { type Item, type Folder, ItemType } from "@/app/generated/prisma/client";
+import { type Item, type Folder, ItemType } from "@/app/generated/prisma/browser";
 import { createItem, updateItem, deleteItem } from "@/app/actions/items";
 import toast from "react-hot-toast";
 
