@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type Item, type Folder, ItemType } from "@/app/generated/prisma/browser";
 
 type ItemWithFolder = Item & { folder: Pick<Folder, "id" | "name"> };
@@ -42,9 +43,27 @@ const TYPE_ICONS: Record<ItemType, string> = {
 
 function LinkCard({ item }: { item: ItemWithFolder }) {
   return (
-    <>
+    <div className="flex">
+      {/* Left: text content */}
+      <div className="flex-1 p-4 min-w-0">
+        <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
+          {item.title}
+        </h3>
+        {item.content && (
+          <p className="mt-1.5 line-clamp-2 text-xs text-gray-500 dark:text-gray-400">
+            {item.content.slice(0, 100)}
+          </p>
+        )}
+        {item.url && (
+          <p className="mt-2 flex items-center gap-1 truncate text-xs text-blue-600 dark:text-blue-400">
+            <span>{"\u{1F517}"}</span>
+            <span className="truncate">{getDomain(item.url)}</span>
+          </p>
+        )}
+      </div>
+      {/* Right: thumbnail */}
       {item.ogImage ? (
-        <div className="relative h-36 w-full overflow-hidden rounded-t-lg bg-gray-100 dark:bg-gray-700">
+        <div className="relative w-28 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-700">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={item.ogImage}
@@ -53,26 +72,11 @@ function LinkCard({ item }: { item: ItemWithFolder }) {
           />
         </div>
       ) : (
-        <div className="flex h-36 w-full items-center justify-center rounded-t-lg bg-gray-100 text-4xl text-gray-400 dark:bg-gray-700 dark:text-gray-500">
-          {"\u{1F517}"}
+        <div className="flex w-28 shrink-0 items-center justify-center bg-gray-100 text-2xl text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+          {"\u{1F310}"}
         </div>
       )}
-      <div className="p-4">
-        <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-          {item.title}
-        </h3>
-        {item.url && (
-          <p className="mt-1 truncate text-xs text-blue-600 dark:text-blue-400">
-            {getDomain(item.url)}
-          </p>
-        )}
-        {item.content && (
-          <p className="mt-2 line-clamp-2 text-xs text-gray-500 dark:text-gray-400">
-            {item.content.slice(0, 100)}
-          </p>
-        )}
-      </div>
-    </>
+    </div>
   );
 }
 
@@ -88,24 +92,39 @@ const LANGUAGE_COLORS: Record<string, string> = {
 
 const DEFAULT_LANG_COLOR = "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
 
-function SnippetCard({ item }: { item: ItemWithFolder }) {
+function SnippetCard({ item, expanded, onToggleExpand }: { item: ItemWithFolder; expanded: boolean; onToggleExpand: () => void }) {
   const langKey = item.language?.toLowerCase() ?? "";
   const langColor = LANGUAGE_COLORS[langKey] ?? DEFAULT_LANG_COLOR;
+  const lineCount = item.content.split("\n").length;
+  const isLong = lineCount > 4;
 
   return (
     <div className="p-4">
-      {item.language && (
-        <span className={`mb-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${langColor}`}>
-          {item.language}
-        </span>
-      )}
+      <div className="flex items-center gap-2 mb-2">
+        {item.language && (
+          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${langColor}`}>
+            {item.language}
+          </span>
+        )}
+      </div>
       <h3 className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
         {item.title}
       </h3>
-      <div className="mt-2 overflow-hidden rounded bg-gray-50 p-2 dark:bg-gray-900">
-        <pre className="line-clamp-4 whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-gray-700 dark:text-gray-300">
+      <div className="mt-2 overflow-hidden rounded bg-gray-50 dark:bg-gray-900">
+        <pre className={`whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-gray-700 dark:text-gray-300 p-2 ${expanded ? "" : "line-clamp-4"}`}>
           {item.content}
         </pre>
+        {isLong && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleExpand();
+            }}
+            className="w-full border-t border-gray-200 dark:border-gray-700 py-1.5 text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            {expanded ? "Show less" : "View more"}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -128,6 +147,8 @@ function NoteCard({ item }: { item: ItemWithFolder }) {
 }
 
 export default function ItemCard({ item, onClick }: ItemCardProps) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <article
       role="button"
@@ -142,7 +163,7 @@ export default function ItemCard({ item, onClick }: ItemCardProps) {
       className="group cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-gray-700 dark:bg-gray-800"
     >
       {item.type === ItemType.LINK && <LinkCard item={item} />}
-      {item.type === ItemType.SNIPPET && <SnippetCard item={item} />}
+      {item.type === ItemType.SNIPPET && <SnippetCard item={item} expanded={expanded} onToggleExpand={() => setExpanded(!expanded)} />}
       {item.type === ItemType.NOTE && <NoteCard item={item} />}
 
       {/* Footer: type badge, folder chip, timestamp */}
