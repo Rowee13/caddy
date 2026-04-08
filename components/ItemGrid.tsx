@@ -106,7 +106,7 @@ export default function ItemGrid({
         <EmptyState onNewItem={onNewItem} hasSearchQuery={hasSearchQuery || !!typeFilter} />
       ) : null}
 
-      <div className="columns-1 gap-4 md:columns-2 lg:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
+      <div className="columns-1 gap-4 lg:columns-2 xl:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
         {items.map((item) => (
           <ItemCard key={item.id} item={item} onClick={onItemClick} />
         ))}
