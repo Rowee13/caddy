@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { type Item, type Folder } from "@/app/generated/prisma/browser";
+import { type Item, type Folder, type ItemType } from "@/app/generated/prisma/browser";
 import { type FolderWithCount } from "@/components/FolderList";
 import Sidebar from "@/components/Sidebar";
 import ItemGrid from "@/components/ItemGrid";
@@ -18,6 +18,7 @@ interface DashboardProps {
 
 export default function Dashboard({ folders, items }: DashboardProps) {
     const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+    const [typeFilter, setTypeFilter] = useState<ItemType | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [modalState, setModalState] = useState<{
@@ -25,9 +26,10 @@ export default function Dashboard({ folders, items }: DashboardProps) {
         item: ItemWithFolder | null;
     }>({ isOpen: false, item: null });
 
-    // Filter items by folder and search query
+    // Filter items by folder, type, and search query
     const filteredItems = items.filter((item) => {
         if (selectedFolderId && item.folderId !== selectedFolderId) return false;
+        if (typeFilter && item.type !== typeFilter) return false;
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
             return item.title.toLowerCase().includes(q) || item.content.toLowerCase().includes(q);
@@ -85,6 +87,9 @@ export default function Dashboard({ folders, items }: DashboardProps) {
                         onItemClick={(item) => setModalState({ isOpen: true, item })}
                         onNewItem={() => setModalState({ isOpen: true, item: null })}
                         hasSearchQuery={searchQuery.length > 0}
+                        typeFilter={typeFilter}
+                        onTypeFilterChange={setTypeFilter}
+                        showTypeFilter={!selectedFolderId}
                     />
                 </main>
             </div>

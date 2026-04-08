@@ -1,15 +1,25 @@
 "use client";
 
-import { type Item, type Folder } from "@/app/generated/prisma/browser";
+import { type Item, type Folder, type ItemType } from "@/app/generated/prisma/browser";
 import ItemCard from "@/components/ItemCard";
 
 type ItemWithFolder = Item & { folder: Pick<Folder, "id" | "name"> };
+
+const TYPE_FILTER_OPTIONS: { value: ItemType | null; label: string; icon: string }[] = [
+  { value: null, label: "All", icon: "" },
+  { value: "LINK" as ItemType, label: "Links", icon: "\u{1F517}" },
+  { value: "SNIPPET" as ItemType, label: "Snippets", icon: "\u{1F4BB}" },
+  { value: "NOTE" as ItemType, label: "Notes", icon: "\u{1F4DD}" },
+];
 
 interface ItemGridProps {
   items: ItemWithFolder[];
   onItemClick: (item: ItemWithFolder) => void;
   onNewItem: () => void;
   hasSearchQuery?: boolean;
+  typeFilter?: ItemType | null;
+  onTypeFilterChange?: (type: ItemType | null) => void;
+  showTypeFilter?: boolean;
 }
 
 function EmptyState({ onNewItem, hasSearchQuery }: { onNewItem: () => void; hasSearchQuery?: boolean }) {
@@ -51,21 +61,46 @@ export default function ItemGrid({
   onItemClick,
   onNewItem,
   hasSearchQuery,
+  typeFilter,
+  onTypeFilterChange,
+  showTypeFilter,
 }: ItemGridProps) {
-  if (items.length === 0) {
+  if (items.length === 0 && !showTypeFilter) {
     return <EmptyState onNewItem={onNewItem} hasSearchQuery={hasSearchQuery} />;
   }
 
   return (
     <div className="p-4 md:p-6">
-      <div className="mb-4 flex items-center justify-end">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        {/* Type filter pills — only in All view */}
+        {showTypeFilter ? (
+          <div className="flex items-center gap-1.5">
+            {TYPE_FILTER_OPTIONS.map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => onTypeFilterChange?.(opt.value)}
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                  typeFilter === opt.value
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                {opt.icon ? `${opt.icon} ` : ""}{opt.label}
+              </button>
+            ))}
+          </div>
+        ) : <div />}
         <button
           onClick={onNewItem}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          className="shrink-0 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
         >
           + New Item
         </button>
       </div>
+
+      {items.length === 0 ? (
+        <EmptyState onNewItem={onNewItem} hasSearchQuery={hasSearchQuery || !!typeFilter} />
+      ) : null}
 
       <div className="columns-1 gap-4 md:columns-2 lg:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
         {items.map((item) => (
