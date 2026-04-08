@@ -63,7 +63,7 @@ function LinkCard({ item }: { item: ItemWithFolder }) {
       </div>
       {/* Right: thumbnail */}
       {item.ogImage ? (
-        <div className="relative w-28 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <div className="relative h-24 w-24 shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-700">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={item.ogImage}
@@ -72,7 +72,7 @@ function LinkCard({ item }: { item: ItemWithFolder }) {
           />
         </div>
       ) : (
-        <div className="flex w-28 shrink-0 items-center justify-center bg-gray-100 text-2xl text-gray-400 dark:bg-gray-700 dark:text-gray-500">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center bg-gray-100 text-2xl text-gray-400 dark:bg-gray-700 dark:text-gray-500">
           {"\u{1F310}"}
         </div>
       )}
